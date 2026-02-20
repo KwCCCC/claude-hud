@@ -260,6 +260,7 @@ This fork adds:
 | **Days format** | Reset time `151h 59m` → `6d 7h` |
 | **extraCmd in config** | Read `extraCmd` from `config.json` instead of requiring `--extra-cmd` flag |
 | **Cyan extraLabel** | Extra label rendered in cyan instead of dim gray |
+| **Session name** | Shows `/rename` session name as `[name]` in green on project line |
 
 ### Quick Install
 
@@ -273,7 +274,7 @@ Then run `/claude-hud:setup` inside Claude Code.
 
 ### What `install.sh` does
 
-1. Patches 4 source files in the plugin cache (index.ts, session-line.ts, environment.ts, usage.ts)
+1. Patches 7 source files in the plugin cache (index.ts, session-line.ts, environment.ts, usage.ts, project.ts, types.ts, transcript.ts)
 2. Installs `skill-label.sh` to `~/.claude/plugins/claude-hud/`
 3. Creates/merges `config.json` with skill label and display defaults
 

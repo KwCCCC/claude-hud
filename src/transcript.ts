@@ -4,6 +4,8 @@ import type { TranscriptData, ToolEntry, AgentEntry, TodoItem } from './types.js
 
 interface TranscriptLine {
   timestamp?: string;
+  type?: string;
+  customTitle?: string;
   message?: {
     content?: ContentBlock[];
   };
@@ -46,6 +48,9 @@ export async function parseTranscript(transcriptPath: string): Promise<Transcrip
 
       try {
         const entry = JSON.parse(line) as TranscriptLine;
+        if (entry.type === 'custom-title' && entry.customTitle) {
+          result.sessionName = entry.customTitle;
+        }
         processEntry(entry, toolMap, agentMap, taskIdToIndex, latestTodos, result);
       } catch {
         // Skip malformed lines

@@ -2,7 +2,7 @@
 set -e
 
 # GenLab Custom HUD Installer
-# One-command setup for custom claude-hud with skill label, cyan extraLabel, days format
+# One-command setup for custom claude-hud with skill label, cyan extraLabel, days format, session name
 # Usage: curl -fsSL https://raw.githubusercontent.com/KwCCCC/claude-hud/custom/genlab-hud/extras/install.sh | bash
 
 REPO="KwCCCC/claude-hud"
@@ -26,6 +26,9 @@ curl -fsSL "${BASE}/src/index.ts" -o "${PLUGIN_DIR}src/index.ts"
 curl -fsSL "${BASE}/src/render/session-line.ts" -o "${PLUGIN_DIR}src/render/session-line.ts"
 curl -fsSL "${BASE}/src/render/lines/environment.ts" -o "${PLUGIN_DIR}src/render/lines/environment.ts"
 curl -fsSL "${BASE}/src/render/lines/usage.ts" -o "${PLUGIN_DIR}src/render/lines/usage.ts"
+curl -fsSL "${BASE}/src/render/lines/project.ts" -o "${PLUGIN_DIR}src/render/lines/project.ts"
+curl -fsSL "${BASE}/src/types.ts" -o "${PLUGIN_DIR}src/types.ts"
+curl -fsSL "${BASE}/src/transcript.ts" -o "${PLUGIN_DIR}src/transcript.ts"
 
 # 3. Install skill-label script
 echo "[genlab-hud] Installing skill-label.sh..."
@@ -102,3 +105,4 @@ echo "  Custom features:"
 echo "    - skill:name label (cyan) — shows active skill, hides when done"
 echo "    - Days format — 151h 59m → 6d 7h"
 echo "    - extraCmd via config.json — no --extra-cmd flag needed"
+echo "    - Session name — shows [name] in green when /rename is used"
