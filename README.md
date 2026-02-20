@@ -250,6 +250,43 @@ MIT — see [LICENSE](LICENSE)
 
 ---
 
+## GenLab Custom Fork
+
+This fork adds:
+
+| Feature | Description |
+|---------|-------------|
+| **Skill label** | Shows active skill as `skill:write-spec` (cyan), auto-hides when done |
+| **Days format** | Reset time `151h 59m` → `6d 7h` |
+| **extraCmd in config** | Read `extraCmd` from `config.json` instead of requiring `--extra-cmd` flag |
+| **Cyan extraLabel** | Extra label rendered in cyan instead of dim gray |
+
+### Quick Install
+
+**Prerequisites**: [claude-hud](https://github.com/jarrodwatts/claude-hud) plugin must be installed first.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/KwCCCC/claude-hud/custom/genlab-hud/extras/install.sh | bash
+```
+
+Then run `/claude-hud:setup` inside Claude Code.
+
+### What `install.sh` does
+
+1. Patches 4 source files in the plugin cache (index.ts, session-line.ts, environment.ts, usage.ts)
+2. Installs `skill-label.sh` to `~/.claude/plugins/claude-hud/`
+3. Creates/merges `config.json` with skill label and display defaults
+
+### Re-applying after plugin updates
+
+When the upstream plugin updates, the cache is overwritten. Re-run the install script:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/KwCCCC/claude-hud/custom/genlab-hud/extras/install.sh | bash
+```
+
+---
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=jarrodwatts/claude-hud&type=Date)](https://star-history.com/#jarrodwatts/claude-hud&Date)
