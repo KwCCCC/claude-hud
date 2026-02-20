@@ -1,6 +1,6 @@
 import type { RenderContext } from '../../types.js';
 import { getModelName, getProviderLabel } from '../../stdin.js';
-import { cyan, green, magenta, yellow, red } from '../colors.js';
+import { brightBlue, cyan, magenta, yellow, red } from '../colors.js';
 
 export function renderProjectLine(ctx: RenderContext): string | null {
   const display = ctx.config?.display;
@@ -59,7 +59,7 @@ export function renderProjectLine(ctx: RenderContext): string | null {
 
     let sessionPart = '';
     if (ctx.transcript.sessionName) {
-      sessionPart = ` ${green(`[${ctx.transcript.sessionName}]`)}`;
+      sessionPart = ` ${brightBlue(`[${ctx.transcript.sessionName}]`)}`;
     }
     parts.push(`${yellow(projectPath)}${gitPart}${sessionPart}`);
   }

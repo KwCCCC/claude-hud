@@ -9,6 +9,10 @@ const CYAN = '\x1b[36m';
 const BRIGHT_BLUE = '\x1b[94m';
 const BRIGHT_MAGENTA = '\x1b[95m';
 
+export function brightBlue(text: string): string {
+  return `${BRIGHT_BLUE}${text}${RESET}`;
+}
+
 export function green(text: string): string {
   return `${GREEN}${text}${RESET}`;
 }
