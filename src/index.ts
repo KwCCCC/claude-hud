@@ -4,11 +4,11 @@ import { render } from './render/index.js';
 import { countConfigs } from './config-reader.js';
 import { getGitStatus } from './git.js';
 import { getUsage } from './usage-api.js';
-import { loadConfig } from './config.js';
+import { loadConfig, getConfigPath } from './config.js';
 import { parseExtraCmdArg, runExtraCmd } from './extra-cmd.js';
 import type { RenderContext } from './types.js';
 import { fileURLToPath } from 'node:url';
-import { realpathSync } from 'node:fs';
+import { realpathSync, readFileSync, existsSync } from 'node:fs';
 
 export type MainDeps = {
   readStdin: typeof readStdin;
@@ -63,7 +63,16 @@ export async function main(overrides: Partial<MainDeps> = {}): Promise<void> {
       ? await deps.getUsage()
       : null;
 
-    const extraCmd = deps.parseExtraCmdArg();
+    let extraCmd = deps.parseExtraCmdArg();
+    if (!extraCmd) {
+      try {
+        const cfgPath = getConfigPath();
+        if (existsSync(cfgPath)) {
+          const raw = JSON.parse(readFileSync(cfgPath, 'utf-8'));
+          if (typeof raw?.extraCmd === 'string') extraCmd = raw.extraCmd;
+        }
+      } catch { /* ignore */ }
+    }
     const extraLabel = extraCmd ? await deps.runExtraCmd(extraCmd) : null;
 
     const sessionDuration = formatSessionDuration(transcript.sessionStart, deps.now);

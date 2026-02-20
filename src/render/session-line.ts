@@ -183,7 +183,7 @@ export function renderSessionLine(ctx: RenderContext): string {
   }
 
   if (ctx.extraLabel) {
-    parts.push(dim(ctx.extraLabel));
+    parts.push(cyan(ctx.extraLabel));
   }
 
   let line = parts.join(' | ');

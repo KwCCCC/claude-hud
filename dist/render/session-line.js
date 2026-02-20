@@ -164,7 +164,7 @@ export function renderSessionLine(ctx) {
         parts.push(dim(`⏱️  ${ctx.sessionDuration}`));
     }
     if (ctx.extraLabel) {
-        parts.push(dim(ctx.extraLabel));
+        parts.push(cyan(ctx.extraLabel));
     }
     let line = parts.join(' | ');
     // Token breakdown at high context
