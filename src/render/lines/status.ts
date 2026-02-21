@@ -57,15 +57,15 @@ export function renderStatusLine(ctx: RenderContext): string | null {
 
 function renderCompactContext(percent: number): string {
   const color = getContextColor(percent);
-  const label = `ctx:${percent}%`;
+  const pct = `${color}${percent}%${RESET}`;
 
   if (percent >= 85) {
-    return `${color}${label} CRITICAL${RESET}`;
+    return `${dim('ctx:')}${color}${percent}% CRITICAL${RESET}`;
   }
   if (percent >= 80) {
-    return `${color}${label} COMPRESS?${RESET}`;
+    return `${dim('ctx:')}${color}${percent}% COMPRESS?${RESET}`;
   }
-  return `${color}${label}${RESET}`;
+  return `${dim('ctx:')}${pct}`;
 }
 
 function renderCompactUsage(data: UsageData): string | null {
@@ -82,20 +82,20 @@ function renderCompactUsage(data: UsageData): string | null {
 
   const parts: string[] = [];
 
-  // 5h usage — uses getContextColor (same as OMC: GREEN <70, YELLOW 70-84, RED >=85)
+  // 5h usage — label dim, percent colored, reset time dim
   if (data.fiveHour !== null) {
     const color = getContextColor(data.fiveHour);
     const reset = formatResetTime(data.fiveHourResetAt);
-    const resetPart = reset ? `(${reset})` : '';
-    parts.push(`${color}5h:${data.fiveHour}%${resetPart}${RESET}`);
+    const resetPart = reset ? dim(`(${reset})`) : '';
+    parts.push(`${dim('5h:')}${color}${data.fiveHour}%${RESET}${resetPart}`);
   }
 
-  // Weekly usage — same color scheme as OMC
+  // Weekly usage — same pattern
   if (data.sevenDay !== null) {
     const color = getContextColor(data.sevenDay);
     const reset = formatResetTime(data.sevenDayResetAt);
-    const resetPart = reset ? `(${reset})` : '';
-    parts.push(`${color}wk:${data.sevenDay}%${resetPart}${RESET}`);
+    const resetPart = reset ? dim(`(${reset})`) : '';
+    parts.push(`${dim('wk:')}${color}${data.sevenDay}%${RESET}${resetPart}`);
   }
 
   return parts.length > 0 ? parts.join(' ') : null;
