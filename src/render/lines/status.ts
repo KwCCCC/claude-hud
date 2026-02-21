@@ -1,11 +1,13 @@
 import type { RenderContext, UsageData } from '../../types.js';
 import { isLimitReached } from '../../types.js';
 import { getContextPercent, getBufferedPercent, getProviderLabel } from '../../stdin.js';
-import { dim, cyan, green, red, yellow, getContextColor, getUsageColor, RESET } from '../colors.js';
+import { dim, cyan, green, red, yellow, getContextColor, RESET } from '../colors.js';
+
+const SEP = dim('|');
 
 /**
  * Unified status line (OMC-style compact):
- * ctx:25% | 5h:41%(3h14m) wk:11%(5d17h) | 1 CLAUDE.md | v2.1.50 | +15 -3 | skill:write-spec
+ * ctx:25%|5h:41%(3h14m) wk:11%(5d17h)|1 CLAUDE.md|v2.1.50|+15 -3|skill:write-spec
  */
 export function renderStatusLine(ctx: RenderContext): string | null {
   const parts: string[] = [];
@@ -17,7 +19,7 @@ export function renderStatusLine(ctx: RenderContext): string | null {
   const percent = autocompactMode === 'disabled' ? rawPercent : bufferedPercent;
   parts.push(renderCompactContext(percent));
 
-  // 2) 5h:XX%(XhXm) wk:XX%(XdXh) (OMC-style usage)
+  // 2) 5h:XX%(XhXm) wk:XX%(XdXh) (OMC-style usage, same color as ctx)
   const display = ctx.config?.display;
   if (display?.showUsage !== false && ctx.usageData?.planName && !getProviderLabel(ctx.stdin)) {
     const usagePart = renderCompactUsage(ctx.usageData);
@@ -50,12 +52,12 @@ export function renderStatusLine(ctx: RenderContext): string | null {
 
   if (parts.length === 0) return null;
 
-  return parts.join(dim(' | '));
+  return parts.join(` ${SEP} `);
 }
 
 function renderCompactContext(percent: number): string {
   const color = getContextColor(percent);
-  let label = `ctx:${percent}%`;
+  const label = `ctx:${percent}%`;
 
   if (percent >= 85) {
     return `${color}${label} CRITICAL${RESET}`;
@@ -80,20 +82,20 @@ function renderCompactUsage(data: UsageData): string | null {
 
   const parts: string[] = [];
 
-  // 5h usage
+  // 5h usage — uses getContextColor (same as OMC: GREEN <70, YELLOW 70-84, RED >=85)
   if (data.fiveHour !== null) {
-    const fiveColor = getUsageColor(data.fiveHour);
-    const fiveReset = formatResetTime(data.fiveHourResetAt);
-    const resetPart = fiveReset ? `(${fiveReset})` : '';
-    parts.push(`${fiveColor}5h:${data.fiveHour}%${resetPart}${RESET}`);
+    const color = getContextColor(data.fiveHour);
+    const reset = formatResetTime(data.fiveHourResetAt);
+    const resetPart = reset ? `(${reset})` : '';
+    parts.push(`${color}5h:${data.fiveHour}%${resetPart}${RESET}`);
   }
 
-  // Weekly usage
+  // Weekly usage — same color scheme as OMC
   if (data.sevenDay !== null) {
-    const wkColor = getUsageColor(data.sevenDay);
-    const wkReset = formatResetTime(data.sevenDayResetAt);
-    const resetPart = wkReset ? `(${wkReset})` : '';
-    parts.push(`${wkColor}wk:${data.sevenDay}%${resetPart}${RESET}`);
+    const color = getContextColor(data.sevenDay);
+    const reset = formatResetTime(data.sevenDayResetAt);
+    const resetPart = reset ? `(${reset})` : '';
+    parts.push(`${color}wk:${data.sevenDay}%${resetPart}${RESET}`);
   }
 
   return parts.length > 0 ? parts.join(' ') : null;

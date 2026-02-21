@@ -27,19 +27,20 @@ export function renderProjectLine(ctx: RenderContext): string | null {
     const showGit = gitConfig?.enabled ?? true;
 
     if (showGit && ctx.gitStatus) {
-      const gitParts: string[] = [ctx.gitStatus.branch];
+      const branchParts: string[] = [ctx.gitStatus.branch];
 
       if ((gitConfig?.showDirty ?? true) && ctx.gitStatus.isDirty) {
-        gitParts.push('*');
+        branchParts.push('*');
       }
 
+      gitPart = ` ${magenta('git:(')}${cyan(branchParts.join(''))}${magenta(')')}`;
+
+      // ↑↓ ahead/behind OUTSIDE parentheses
       if (gitConfig?.showAheadBehind) {
-        if (ctx.gitStatus.ahead > 0) {
-          gitParts.push(` ↑${ctx.gitStatus.ahead}`);
-        }
-        if (ctx.gitStatus.behind > 0) {
-          gitParts.push(` ↓${ctx.gitStatus.behind}`);
-        }
+        const abParts: string[] = [];
+        if (ctx.gitStatus.ahead > 0) abParts.push(`↑${ctx.gitStatus.ahead}`);
+        if (ctx.gitStatus.behind > 0) abParts.push(`↓${ctx.gitStatus.behind}`);
+        if (abParts.length > 0) gitPart += ` ${cyan(abParts.join(' '))}`;
       }
 
       if (gitConfig?.showFileStats && ctx.gitStatus.fileStats) {
@@ -49,12 +50,8 @@ export function renderProjectLine(ctx: RenderContext): string | null {
         if (added > 0) statParts.push(`+${added}`);
         if (deleted > 0) statParts.push(`✘${deleted}`);
         if (untracked > 0) statParts.push(`?${untracked}`);
-        if (statParts.length > 0) {
-          gitParts.push(` ${statParts.join(' ')}`);
-        }
+        if (statParts.length > 0) gitPart += ` ${statParts.join(' ')}`;
       }
-
-      gitPart = ` ${magenta('git:(')}${cyan(gitParts.join(''))}${magenta(')')}`;
     }
 
     let sessionPart = '';
