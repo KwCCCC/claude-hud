@@ -1,6 +1,6 @@
 import type { RenderContext } from '../../types.js';
 import { getModelName, getProviderLabel } from '../../stdin.js';
-import { brightBlue, cyan, magenta, yellow, red } from '../colors.js';
+import { cyan, magenta, yellow, red } from '../colors.js';
 
 export function renderProjectLine(ctx: RenderContext): string | null {
   const display = ctx.config?.display;
@@ -13,8 +13,10 @@ export function renderProjectLine(ctx: RenderContext): string | null {
     const hasApiKey = !!process.env.ANTHROPIC_API_KEY;
     const billingLabel = hasApiKey ? red('API') : planName;
     const planDisplay = providerLabel ?? billingLabel;
-    const modelDisplay = planDisplay ? `${model} | ${planDisplay}` : model;
-    parts.push(cyan(`[${modelDisplay}]`));
+    const innerParts = [model];
+    if (planDisplay) innerParts.push(String(planDisplay));
+    if (ctx.cliVersion) innerParts.push(`v${ctx.cliVersion}`);
+    parts.push(cyan(`[${innerParts.join(' | ')}]`));
   }
 
   if (ctx.stdin.cwd) {
@@ -54,11 +56,7 @@ export function renderProjectLine(ctx: RenderContext): string | null {
       }
     }
 
-    let sessionPart = '';
-    if (ctx.transcript.sessionName) {
-      sessionPart = ` ${brightBlue(`[${ctx.transcript.sessionName}]`)}`;
-    }
-    parts.push(`${yellow(projectPath)}${gitPart}${sessionPart}`);
+    parts.push(`${yellow(projectPath)}${gitPart}`);
   }
 
   if (parts.length === 0) {

@@ -1,7 +1,7 @@
 import type { RenderContext, UsageData } from '../../types.js';
 import { isLimitReached } from '../../types.js';
 import { getContextPercent, getBufferedPercent, getProviderLabel } from '../../stdin.js';
-import { dim, cyan, green, red, yellow, getContextColor, RESET } from '../colors.js';
+import { dim, cyan, brightBlue, green, red, yellow, getContextColor, RESET } from '../colors.js';
 
 const SEP = dim('|');
 
@@ -11,6 +11,11 @@ const SEP = dim('|');
  */
 export function renderStatusLine(ctx: RenderContext): string | null {
   const parts: string[] = [];
+
+  // 0) Session name (first position)
+  if (ctx.transcript.sessionName) {
+    parts.push(brightBlue(ctx.transcript.sessionName));
+  }
 
   // 1) ctx:XX% (OMC-style compact, no bar)
   const rawPercent = getContextPercent(ctx.stdin);
@@ -31,12 +36,7 @@ export function renderStatusLine(ctx: RenderContext): string | null {
     parts.push(dim(`${ctx.claudeMdCount} CLAUDE.md`));
   }
 
-  // 4) vX.X.X
-  if (ctx.cliVersion) {
-    parts.push(dim(`v${ctx.cliVersion}`));
-  }
-
-  // 5) +N -N (line diff)
+  // 4) +N -N
   if (ctx.gitStatus?.lineDiff) {
     const { additions, deletions } = ctx.gitStatus.lineDiff;
     const diffParts: string[] = [];
