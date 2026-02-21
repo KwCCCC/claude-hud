@@ -10,12 +10,18 @@ export interface FileStats {
   untracked: number;
 }
 
+export interface LineDiffStats {
+  additions: number;
+  deletions: number;
+}
+
 export interface GitStatus {
   branch: string;
   isDirty: boolean;
   ahead: number;
   behind: number;
   fileStats?: FileStats;
+  lineDiff?: LineDiffStats;
 }
 
 export async function getGitBranch(cwd?: string): Promise<string | null> {
@@ -82,10 +88,39 @@ export async function getGitStatus(cwd?: string): Promise<GitStatus | null> {
       // No upstream or error, keep 0/0
     }
 
-    return { branch, isDirty, ahead, behind, fileStats };
+    // Get line-level diff stats (staged + unstaged vs HEAD)
+    let lineDiff: LineDiffStats | undefined;
+    try {
+      const { stdout: diffOut } = await execFileAsync(
+        'git',
+        ['diff', 'HEAD', '--numstat'],
+        { cwd, timeout: 1000, encoding: 'utf8' }
+      );
+      if (diffOut.trim()) {
+        lineDiff = parseLineDiff(diffOut.trim());
+      }
+    } catch {
+      // Ignore errors (e.g. no commits yet)
+    }
+
+    return { branch, isDirty, ahead, behind, fileStats, lineDiff };
   } catch {
     return null;
   }
+}
+
+/**
+ * Parse git diff --numstat output and sum additions/deletions
+ */
+function parseLineDiff(numstatOutput: string): LineDiffStats {
+  let additions = 0;
+  let deletions = 0;
+  for (const line of numstatOutput.split('\n').filter(Boolean)) {
+    const [add, del] = line.split('\t');
+    if (add !== '-') additions += parseInt(add, 10) || 0;
+    if (del !== '-') deletions += parseInt(del, 10) || 0;
+  }
+  return { additions, deletions };
 }
 
 /**

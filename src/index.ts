@@ -7,8 +7,12 @@ import { getUsage } from './usage-api.js';
 import { loadConfig, getConfigPath } from './config.js';
 import { parseExtraCmdArg, runExtraCmd } from './extra-cmd.js';
 import type { RenderContext } from './types.js';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
 import { realpathSync, readFileSync, existsSync } from 'node:fs';
+
+const execFileAsync = promisify(execFile);
 
 export type MainDeps = {
   readStdin: typeof readStdin;
@@ -75,6 +79,13 @@ export async function main(overrides: Partial<MainDeps> = {}): Promise<void> {
     }
     const extraLabel = extraCmd ? await deps.runExtraCmd(extraCmd) : null;
 
+    let cliVersion: string | undefined;
+    try {
+      const { stdout: verOut } = await execFileAsync('claude', ['--version'], { timeout: 1000, encoding: 'utf8' });
+      const match = verOut.match(/^([\d.]+)/);
+      if (match) cliVersion = match[1];
+    } catch { /* ignore */ }
+
     const sessionDuration = formatSessionDuration(transcript.sessionStart, deps.now);
 
     const ctx: RenderContext = {
@@ -89,6 +100,7 @@ export async function main(overrides: Partial<MainDeps> = {}): Promise<void> {
       usageData,
       config,
       extraLabel,
+      cliVersion,
     };
 
     deps.render(ctx);

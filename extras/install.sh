@@ -30,6 +30,7 @@ curl -fsSL "${BASE}/src/render/colors.ts" -o "${PLUGIN_DIR}src/render/colors.ts"
 curl -fsSL "${BASE}/src/render/lines/project.ts" -o "${PLUGIN_DIR}src/render/lines/project.ts"
 curl -fsSL "${BASE}/src/types.ts" -o "${PLUGIN_DIR}src/types.ts"
 curl -fsSL "${BASE}/src/transcript.ts" -o "${PLUGIN_DIR}src/transcript.ts"
+curl -fsSL "${BASE}/src/git.ts" -o "${PLUGIN_DIR}src/git.ts"
 
 # 3. Install skill-label script
 echo "[genlab-hud] Installing skill-label.sh..."
