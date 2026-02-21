@@ -1,58 +1,29 @@
 import type { RenderContext, UsageData } from '../../types.js';
 import { isLimitReached } from '../../types.js';
 import { getContextPercent, getBufferedPercent, getProviderLabel } from '../../stdin.js';
-import { dim, cyan, brightBlue, green, red, yellow, getContextColor, RESET } from '../colors.js';
+import { dim, red, yellow, getContextColor, RESET } from '../colors.js';
 
 const SEP = dim('|');
 
 /**
- * Unified status line (OMC-style compact):
- * ctx:25%|5h:41%(3h14m) wk:11%(5d17h)|1 CLAUDE.md|v2.1.50|+15 -3|skill:write-spec
+ * Status line (OMC-style compact ctx + usage only):
+ * ctx:25% | 5h:41%(3h14m) wk:11%(5d17h)
  */
 export function renderStatusLine(ctx: RenderContext): string | null {
   const parts: string[] = [];
 
-  // 1) ctx:XX% (OMC-style compact, no bar)
+  // 1) ctx:XX%
   const rawPercent = getContextPercent(ctx.stdin);
   const bufferedPercent = getBufferedPercent(ctx.stdin);
   const autocompactMode = ctx.config?.display?.autocompactBuffer ?? 'enabled';
   const percent = autocompactMode === 'disabled' ? rawPercent : bufferedPercent;
   parts.push(renderCompactContext(percent));
 
-  // 2) 5h:XX%(XhXm) wk:XX%(XdXh) (OMC-style usage, same color as ctx)
+  // 2) 5h:XX%(XhXm) wk:XX%(XdXh)
   const display = ctx.config?.display;
   if (display?.showUsage !== false && ctx.usageData?.planName && !getProviderLabel(ctx.stdin)) {
     const usagePart = renderCompactUsage(ctx.usageData);
     if (usagePart) parts.push(usagePart);
-  }
-
-  // 3) N CLAUDE.md
-  if (display?.showConfigCounts !== false && ctx.claudeMdCount > 0) {
-    parts.push(dim(`${ctx.claudeMdCount} CLAUDE.md`));
-  }
-
-  // 4) vX.X.X
-  if (ctx.cliVersion) {
-    parts.push(dim(`v${ctx.cliVersion}`));
-  }
-
-  // 5) +N -N
-  if (ctx.gitStatus?.lineDiff) {
-    const { additions, deletions } = ctx.gitStatus.lineDiff;
-    const diffParts: string[] = [];
-    if (additions > 0) diffParts.push(green(`+${additions}`));
-    if (deletions > 0) diffParts.push(red(`-${deletions}`));
-    if (diffParts.length > 0) parts.push(diffParts.join(' '));
-  }
-
-  // 6) account email
-  if (ctx.accountEmail) {
-    parts.push(dim(ctx.accountEmail));
-  }
-
-  // 7) skill label
-  if (ctx.extraLabel) {
-    parts.push(cyan(ctx.extraLabel));
   }
 
   if (parts.length === 0) return null;
@@ -87,7 +58,6 @@ function renderCompactUsage(data: UsageData): string | null {
 
   const parts: string[] = [];
 
-  // 5h usage — label dim, percent colored, reset time dim
   if (data.fiveHour !== null) {
     const color = getContextColor(data.fiveHour);
     const reset = formatResetTime(data.fiveHourResetAt);
@@ -95,7 +65,6 @@ function renderCompactUsage(data: UsageData): string | null {
     parts.push(`${dim('5h:')}${color}${data.fiveHour}%${RESET}${resetPart}`);
   }
 
-  // Weekly usage — same pattern
   if (data.sevenDay !== null) {
     const color = getContextColor(data.sevenDay);
     const reset = formatResetTime(data.sevenDayResetAt);

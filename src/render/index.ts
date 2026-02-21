@@ -3,7 +3,7 @@ import { renderSessionLine } from './session-line.js';
 import { renderToolsLine } from './tools-line.js';
 import { renderAgentsLine } from './agents-line.js';
 import { renderTodosLine } from './todos-line.js';
-import { renderProjectLine } from './lines/index.js';
+import { renderProjectLine, renderEnvironmentLine } from './lines/index.js';
 import { renderStatusLine } from './lines/status.js';
 import { dim, RESET } from './colors.js';
 
@@ -70,6 +70,11 @@ function renderExpanded(ctx: RenderContext): string[] {
   const statusLine = renderStatusLine(ctx);
   if (statusLine) {
     lines.push(statusLine);
+  }
+
+  const environmentLine = renderEnvironmentLine(ctx);
+  if (environmentLine) {
+    lines.push(environmentLine);
   }
 
   return lines;

@@ -1,6 +1,6 @@
 import type { RenderContext } from '../../types.js';
 import { getModelName, getProviderLabel } from '../../stdin.js';
-import { brightBlue, cyan, magenta, yellow, red } from '../colors.js';
+import { brightBlue, cyan, dim, magenta, yellow, red } from '../colors.js';
 
 export function renderProjectLine(ctx: RenderContext): string | null {
   const display = ctx.config?.display;
@@ -16,8 +16,11 @@ export function renderProjectLine(ctx: RenderContext): string | null {
     const innerParts = [model];
     if (planDisplay) innerParts.push(String(planDisplay));
     let modelPart = cyan(`[${innerParts.join(' | ')}]`);
+    if (ctx.accountEmail) {
+      modelPart += ` ${dim('⟫')} ${cyan(ctx.accountEmail)}`;
+    }
     if (ctx.transcript.sessionName) {
-      modelPart += ` ${brightBlue('@' + ctx.transcript.sessionName)}`;
+      modelPart += ` ${dim('⟫')} ${brightBlue('@' + ctx.transcript.sessionName)}`;
     }
     parts.push(modelPart);
   }
