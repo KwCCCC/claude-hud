@@ -58,6 +58,27 @@ export function quotaBar(percent: number, width: number = 10): string {
   return `${color}${'█'.repeat(filled)}${DIM}${'░'.repeat(empty)}${RESET}`;
 }
 
+export function getModelTierColor(model?: string): string {
+  if (!model) return CYAN;
+  const m = model.toLowerCase();
+  if (m.includes('opus')) return MAGENTA;
+  if (m.includes('sonnet')) return YELLOW;
+  if (m.includes('haiku')) return GREEN;
+  return CYAN;
+}
+
+export function getDurationColor(ms: number): string {
+  if (ms >= 300000) return RED;     // >=5m
+  if (ms >= 120000) return YELLOW;  // >=2m
+  return GREEN;
+}
+
+export function getUsageColor(percent: number): string {
+  if (percent >= 90) return RED;
+  if (percent >= 70) return YELLOW;
+  return GREEN;
+}
+
 export function coloredBar(percent: number, width: number = 10): string {
   const safeWidth = Number.isFinite(width) ? Math.max(0, Math.round(width)) : 0;
   const safePercent = Number.isFinite(percent) ? Math.min(100, Math.max(0, percent)) : 0;

@@ -3,12 +3,8 @@ import { renderSessionLine } from './session-line.js';
 import { renderToolsLine } from './tools-line.js';
 import { renderAgentsLine } from './agents-line.js';
 import { renderTodosLine } from './todos-line.js';
-import {
-  renderIdentityLine,
-  renderProjectLine,
-  renderEnvironmentLine,
-  renderUsageLine,
-} from './lines/index.js';
+import { renderProjectLine } from './lines/index.js';
+import { renderStatusLine } from './lines/status.js';
 import { dim, RESET } from './colors.js';
 
 function stripAnsi(str: string): string {
@@ -71,17 +67,9 @@ function renderExpanded(ctx: RenderContext): string[] {
     lines.push(projectLine);
   }
 
-  const identityLine = renderIdentityLine(ctx);
-  const usageLine = renderUsageLine(ctx);
-  if (identityLine && usageLine) {
-    lines.push(`${identityLine} \u2502 ${usageLine}`);
-  } else if (identityLine) {
-    lines.push(identityLine);
-  }
-
-  const environmentLine = renderEnvironmentLine(ctx);
-  if (environmentLine) {
-    lines.push(environmentLine);
+  const statusLine = renderStatusLine(ctx);
+  if (statusLine) {
+    lines.push(statusLine);
   }
 
   return lines;

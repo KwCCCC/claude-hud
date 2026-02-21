@@ -2,7 +2,7 @@
 set -e
 
 # GenLab Custom HUD Installer
-# One-command setup for custom claude-hud with skill label, cyan extraLabel, days format, session name
+# One-command setup: OMC-style compact ctx/usage, agent multiline tree, skill label, session name
 # Usage: curl -fsSL https://raw.githubusercontent.com/KwCCCC/claude-hud/custom/genlab-hud/extras/install.sh | bash
 
 REPO="KwCCCC/claude-hud"
@@ -23,10 +23,15 @@ echo "[genlab-hud] Plugin found: ${PLUGIN_DIR}"
 # 2. Patch source files
 echo "[genlab-hud] Patching source files..."
 curl -fsSL "${BASE}/src/index.ts" -o "${PLUGIN_DIR}src/index.ts"
+curl -fsSL "${BASE}/src/config.ts" -o "${PLUGIN_DIR}src/config.ts"
+curl -fsSL "${BASE}/src/render/index.ts" -o "${PLUGIN_DIR}src/render/index.ts"
+curl -fsSL "${BASE}/src/render/colors.ts" -o "${PLUGIN_DIR}src/render/colors.ts"
+curl -fsSL "${BASE}/src/render/agents-line.ts" -o "${PLUGIN_DIR}src/render/agents-line.ts"
 curl -fsSL "${BASE}/src/render/session-line.ts" -o "${PLUGIN_DIR}src/render/session-line.ts"
+curl -fsSL "${BASE}/src/render/lines/index.ts" -o "${PLUGIN_DIR}src/render/lines/index.ts"
+curl -fsSL "${BASE}/src/render/lines/status.ts" -o "${PLUGIN_DIR}src/render/lines/status.ts"
 curl -fsSL "${BASE}/src/render/lines/environment.ts" -o "${PLUGIN_DIR}src/render/lines/environment.ts"
 curl -fsSL "${BASE}/src/render/lines/usage.ts" -o "${PLUGIN_DIR}src/render/lines/usage.ts"
-curl -fsSL "${BASE}/src/render/colors.ts" -o "${PLUGIN_DIR}src/render/colors.ts"
 curl -fsSL "${BASE}/src/render/lines/project.ts" -o "${PLUGIN_DIR}src/render/lines/project.ts"
 curl -fsSL "${BASE}/src/types.ts" -o "${PLUGIN_DIR}src/types.ts"
 curl -fsSL "${BASE}/src/transcript.ts" -o "${PLUGIN_DIR}src/transcript.ts"
@@ -63,7 +68,7 @@ if [ -f "$CONFIG" ]; then
       cfg.display.showDuration = cfg.display.showDuration ?? true;
       cfg.display.showConfigCounts = cfg.display.showConfigCounts ?? true;
       cfg.display.showUsage = cfg.display.showUsage ?? true;
-      cfg.display.usageBarEnabled = cfg.display.usageBarEnabled ?? true;
+      cfg.display.usageBarEnabled = cfg.display.usageBarEnabled ?? false;
       fs.writeFileSync('$CONFIG', JSON.stringify(cfg, null, 2) + '\n');
     "
   else
@@ -78,7 +83,7 @@ if [ -f "$CONFIG" ]; then
     "showDuration": true,
     "showConfigCounts": true,
     "showUsage": true,
-    "usageBarEnabled": true
+    "usageBarEnabled": false
   }
 }
 CONF
@@ -95,7 +100,7 @@ else
     "showDuration": true,
     "showConfigCounts": true,
     "showUsage": true,
-    "usageBarEnabled": true
+    "usageBarEnabled": false
   }
 }
 CONF
@@ -104,7 +109,9 @@ fi
 echo "[genlab-hud] Done! Run /claude-hud:setup in Claude Code to activate the statusLine."
 echo ""
 echo "  Custom features:"
+echo "    - OMC-style compact ctx/usage: ctx:25% | 5h:41%(3h14m) wk:11%(5d17h)"
+echo "    - OMC-style agent tree with model tier colors and padded durations"
+echo "    - Unified status line (ctx + usage + env in one line)"
 echo "    - skill:name label (cyan) — shows active skill, hides when done"
-echo "    - Days format — 151h 59m → 6d 7h"
-echo "    - extraCmd via config.json — no --extra-cmd flag needed"
-echo "    - Session name — shows [name] in green when /rename is used"
+echo "    - Session name — shows [name] in bright blue when /rename is used"
+echo "    - git ↑↓ ahead/behind enabled by default"
