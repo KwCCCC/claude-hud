@@ -12,10 +12,14 @@ BASE="https://raw.githubusercontent.com/${REPO}/${BRANCH}"
 echo "[genlab-hud] Starting installation..."
 
 # 1. Find plugin directory
-PLUGIN_DIR=$(ls -td ~/.claude/plugins/cache/claude-hud/claude-hud/*/ 2>/dev/null | head -1)
+PLUGIN_DIR=$(ls -td ~/.claude/plugins/cache/claude-statusbar/claude-statusbar/*/ 2>/dev/null | head -1)
 if [ -z "$PLUGIN_DIR" ]; then
-  echo "[genlab-hud] Error: claude-hud plugin not found."
-  echo "  Install it first: /plugin install claude-hud"
+  # Fallback: check old claude-hud name
+  PLUGIN_DIR=$(ls -td ~/.claude/plugins/cache/claude-hud/claude-hud/*/ 2>/dev/null | head -1)
+fi
+if [ -z "$PLUGIN_DIR" ]; then
+  echo "[claude-statusbar] Error: plugin not found."
+  echo "  Install it first: /install-plugin claude-statusbar"
   exit 1
 fi
 echo "[genlab-hud] Plugin found: ${PLUGIN_DIR}"

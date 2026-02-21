@@ -1,9 +1,14 @@
 {
-  "name": "claude-hud",
-  "version": "0.0.7",
-  "description": "Real-time statusline HUD for Claude Code",
+  "name": "claude-statusbar",
+  "version": "1.0.0",
+  "description": "Compact statusline for Claude Code — OMC-style ctx/usage, agent tree, profile, skill label",
   "type": "module",
   "main": "dist/index.js",
+  "files": [
+    "dist",
+    "src",
+    "extras"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
@@ -15,9 +20,10 @@
   "keywords": [
     "claude-code",
     "statusline",
-    "hud"
+    "hud",
+    "claude-statusbar"
   ],
-  "author": "Jarrod Watts",
+  "author": "KwCCCC",
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0"
