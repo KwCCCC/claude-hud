@@ -1,6 +1,6 @@
 import type { RenderContext } from '../../types.js';
 import { getModelName, getProviderLabel } from '../../stdin.js';
-import { brightBlue, cyan, green, magenta, yellow, red } from '../colors.js';
+import { brightBlue, cyan, magenta, yellow, red } from '../colors.js';
 
 export function renderProjectLine(ctx: RenderContext): string | null {
   const display = ctx.config?.display;
@@ -57,20 +57,11 @@ export function renderProjectLine(ctx: RenderContext): string | null {
       gitPart = ` ${magenta('git:(')}${cyan(gitParts.join(''))}${magenta(')')}`;
     }
 
-    let lineDiffPart = '';
-    if (ctx.gitStatus?.lineDiff) {
-      const { additions, deletions } = ctx.gitStatus.lineDiff;
-      const diffParts: string[] = [];
-      if (additions > 0) diffParts.push(green(`+${additions}`));
-      if (deletions > 0) diffParts.push(red(`-${deletions}`));
-      if (diffParts.length > 0) lineDiffPart = ` ${diffParts.join(' ')}`;
-    }
-
     let sessionPart = '';
     if (ctx.transcript.sessionName) {
       sessionPart = ` ${brightBlue(`[${ctx.transcript.sessionName}]`)}`;
     }
-    parts.push(`${yellow(projectPath)}${gitPart}${lineDiffPart}${sessionPart}`);
+    parts.push(`${yellow(projectPath)}${gitPart}${sessionPart}`);
   }
 
   if (parts.length === 0) {

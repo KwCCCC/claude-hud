@@ -1,5 +1,5 @@
 import type { RenderContext } from '../../types.js';
-import { dim, cyan } from '../colors.js';
+import { dim, cyan, green, red } from '../colors.js';
 
 export function renderEnvironmentLine(ctx: RenderContext): string | null {
   const display = ctx.config?.display;
@@ -31,6 +31,14 @@ export function renderEnvironmentLine(ctx: RenderContext): string | null {
 
   if (ctx.cliVersion) {
     parts.push(dim(`v${ctx.cliVersion}`));
+  }
+
+  if (ctx.gitStatus?.lineDiff) {
+    const { additions, deletions } = ctx.gitStatus.lineDiff;
+    const diffParts: string[] = [];
+    if (additions > 0) diffParts.push(green(`+${additions}`));
+    if (deletions > 0) diffParts.push(red(`-${deletions}`));
+    if (diffParts.length > 0) parts.push(diffParts.join(' '));
   }
 
   if (ctx.extraLabel) {
