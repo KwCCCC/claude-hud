@@ -2,15 +2,20 @@ import type { RenderContext, UsageData } from '../../types.js';
 import { isLimitReached } from '../../types.js';
 import { getContextPercent, getBufferedPercent, getProviderLabel } from '../../stdin.js';
 import { dim, red, yellow, getContextColor, RESET } from '../colors.js';
+import { renderGitPart } from './project.js';
 
 const SEP = dim('|');
 
 /**
- * Status line (OMC-style compact ctx + usage only):
- * ctx:25% | 5h:41%(3h14m) wk:11%(5d17h)
+ * Status line:
+ * genlab-tools git:(main) ↑2 ↓1 | ctx:25% | 5h:41%(3h14m) wk:11%(5d17h)
  */
 export function renderStatusLine(ctx: RenderContext): string | null {
   const parts: string[] = [];
+
+  // 0) path + git
+  const gitPart = renderGitPart(ctx);
+  if (gitPart) parts.push(gitPart);
 
   // 1) ctx:XX%
   const rawPercent = getContextPercent(ctx.stdin);
