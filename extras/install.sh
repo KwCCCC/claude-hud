@@ -36,6 +36,7 @@ curl -fsSL "${BASE}/src/render/lines/project.ts" -o "${PLUGIN_DIR}src/render/lin
 curl -fsSL "${BASE}/src/types.ts" -o "${PLUGIN_DIR}src/types.ts"
 curl -fsSL "${BASE}/src/transcript.ts" -o "${PLUGIN_DIR}src/transcript.ts"
 curl -fsSL "${BASE}/src/git.ts" -o "${PLUGIN_DIR}src/git.ts"
+curl -fsSL "${BASE}/src/profile-api.ts" -o "${PLUGIN_DIR}src/profile-api.ts"
 
 # 3. Install skill-label script
 echo "[genlab-hud] Installing skill-label.sh..."
@@ -62,9 +63,9 @@ if [ -f "$CONFIG" ]; then
       const cfg = JSON.parse(fs.readFileSync('$CONFIG','utf8'));
       cfg.extraCmd = cfg.extraCmd || '$HOME/.claude/plugins/claude-hud/skill-label.sh';
       cfg.display = cfg.display || {};
-      cfg.display.showTools = cfg.display.showTools ?? true;
+      cfg.display.showTools = cfg.display.showTools ?? false;
       cfg.display.showAgents = cfg.display.showAgents ?? true;
-      cfg.display.showTodos = cfg.display.showTodos ?? true;
+      cfg.display.showTodos = cfg.display.showTodos ?? false;
       cfg.display.showDuration = cfg.display.showDuration ?? true;
       cfg.display.showConfigCounts = cfg.display.showConfigCounts ?? true;
       cfg.display.showUsage = cfg.display.showUsage ?? true;
@@ -77,9 +78,9 @@ if [ -f "$CONFIG" ]; then
 {
   "extraCmd": "$HOME/.claude/plugins/claude-hud/skill-label.sh",
   "display": {
-    "showTools": true,
+    "showTools": false,
     "showAgents": true,
-    "showTodos": true,
+    "showTodos": false,
     "showDuration": true,
     "showConfigCounts": true,
     "showUsage": true,
@@ -94,9 +95,9 @@ else
 {
   "extraCmd": "$HOME/.claude/plugins/claude-hud/skill-label.sh",
   "display": {
-    "showTools": true,
+    "showTools": false,
     "showAgents": true,
-    "showTodos": true,
+    "showTodos": false,
     "showDuration": true,
     "showConfigCounts": true,
     "showUsage": true,

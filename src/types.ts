@@ -88,4 +88,5 @@ export interface RenderContext {
   config: HudConfig;
   extraLabel: string | null;
   cliVersion?: string;
+  accountEmail?: string;
 }

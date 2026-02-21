@@ -4,6 +4,7 @@ import { render } from './render/index.js';
 import { countConfigs } from './config-reader.js';
 import { getGitStatus } from './git.js';
 import { getUsage } from './usage-api.js';
+import { getProfile } from './profile-api.js';
 import { loadConfig, getConfigPath } from './config.js';
 import { parseExtraCmdArg, runExtraCmd } from './extra-cmd.js';
 import type { RenderContext } from './types.js';
@@ -88,6 +89,8 @@ export async function main(overrides: Partial<MainDeps> = {}): Promise<void> {
 
     const sessionDuration = formatSessionDuration(transcript.sessionStart, deps.now);
 
+    const profileData = await getProfile();
+
     const ctx: RenderContext = {
       stdin,
       transcript,
@@ -101,6 +104,7 @@ export async function main(overrides: Partial<MainDeps> = {}): Promise<void> {
       config,
       extraLabel,
       cliVersion,
+      accountEmail: profileData?.email ?? undefined,
     };
 
     deps.render(ctx);

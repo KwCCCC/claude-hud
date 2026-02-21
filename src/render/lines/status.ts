@@ -1,7 +1,7 @@
 import type { RenderContext, UsageData } from '../../types.js';
 import { isLimitReached } from '../../types.js';
 import { getContextPercent, getBufferedPercent, getProviderLabel } from '../../stdin.js';
-import { dim, cyan, green, red, yellow, getContextColor, RESET } from '../colors.js';
+import { dim, cyan, brightBlue, green, red, yellow, getContextColor, RESET } from '../colors.js';
 
 const SEP = dim('|');
 
@@ -45,7 +45,12 @@ export function renderStatusLine(ctx: RenderContext): string | null {
     if (diffParts.length > 0) parts.push(diffParts.join(' '));
   }
 
-  // 6) skill label
+  // 6) account email
+  if (ctx.accountEmail) {
+    parts.push(dim(ctx.accountEmail));
+  }
+
+  // 7) skill label
   if (ctx.extraLabel) {
     parts.push(cyan(ctx.extraLabel));
   }
